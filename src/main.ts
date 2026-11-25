@@ -180,7 +180,8 @@ if (ALBUM.printedBackList) {
 } else {
   buildTracklist($('#tracklist2'), false);
 }
-$('#bc-foot').textContent = FOOT_NOTE;
+// 裏ジャケットの脚注：奥付（カタログ／形式）に、作品版数とエンジン版数を併記する（オーナー指示 2026-11-25）
+$('#bc-foot').textContent = `${FOOT_NOTE} ／ v${__APP_VERSION__} ／ エンジン v${__ENGINE_VERSION__}`;
 
 /* ---------- ジャケットの反転（表⇔裏） ---------- */
 const flipEl = $('#flip');
@@ -574,6 +575,7 @@ if ('mediaSession' in navigator) {
 
 /* ---------- テンプレート共通の配線 ---------- */
 $('#version').textContent = __APP_VERSION__;
+$('#engine-version').textContent = __ENGINE_VERSION__;
 setupDebug($('#debug-panel'), $('#version-line'), [
   { label: '表', title: '表ジャケットへ', run: () => go('cover') },
   { label: '曲目', title: '曲目へ', run: () => go('tracks') },

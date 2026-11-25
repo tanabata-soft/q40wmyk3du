@@ -102,6 +102,33 @@ export const checks = [
     },
   },
   {
+    id: 'engine-version',
+    title: 'エンジン版数（package.json の engineVersion）が記録され、裏ジャケット脚注に併記される',
+    // 裏ジャケットの脚注に作品版数とエンジン版数を併記する決まり（オーナー指示 2026-11-25）。
+    // エンジン版数の正本は package.json の engineVersion（取り込んだテンプレートの版数）。
+    // 欄が無い・形式が違う・脚注への配線が消えていると、併記が静かに崩れるのでここで止める。
+    run({ root }) {
+      const errors = [];
+      const pkg = JSON.parse(read(root, 'package.json'));
+      if (!/^\d+\.\d+\.\d+$/.test(pkg.engineVersion ?? '')) {
+        errors.push(`package.json に engineVersion（取り込んだテンプレートの版数、x.y.z 形式）がありません: ${pkg.engineVersion ?? '未設定'}`);
+      }
+      const main = read(root, 'src/main.ts');
+      if (!/__ENGINE_VERSION__/.test(main) || !/#bc-foot/.test(main)) {
+        errors.push('src/main.ts の裏ジャケット脚注（#bc-foot）にエンジン版数（__ENGINE_VERSION__）の併記がありません');
+      }
+      const html = read(root, 'index.html');
+      if (!/id="engine-version"/.test(html) || !/#engine-version/.test(main)) {
+        errors.push('バージョン表示（#version-line）にエンジン版数の併記（#engine-version）がありません。ジャケット裏のバージョン行に作品版数と並べて出す決まりです');
+      }
+      const vite = read(root, 'vite.config.ts');
+      if (!/__ENGINE_VERSION__/.test(vite)) {
+        errors.push('vite.config.ts に __ENGINE_VERSION__ の埋め込みがありません');
+      }
+      return errors;
+    },
+  },
+  {
     id: 'media-count',
     title: 'メディア（src/album/media.ts の画像・音源）の数が曲数とそろっている',
     run({ root }) {
@@ -109,7 +136,7 @@ export const checks = [
       const n = [...data.matchAll(/src: '([^']+)'/g)].length;
       const media = read(root, 'src/album/media.ts');
       const imgs = [...media.matchAll(/from '\.\/assets\/img\/track\d+\.jpg'/g)].length;
-      const audios = [...media.matchAll(/from '\.\/assets\/audio\/track\d+\.mp4'/g)].length;
+      const audios = [...media.matchAll(/from '\.\/assets\/audio\/track\d+\.mp3'/g)].length;
       const errors = [];
       if (imgs !== n) errors.push(`曲の画像が ${imgs} 件で、曲数 ${n} と違います`);
       if (audios !== n) errors.push(`曲の音源が ${audios} 件で、曲数 ${n} と違います`);

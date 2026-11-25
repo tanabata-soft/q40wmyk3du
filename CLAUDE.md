@@ -14,15 +14,15 @@ PWA アプリ(ツール/ゲーム)の共通テンプレート。**新しいア�
 
 ### テンプレートからの意図的な逸脱(このアプリだけ)
 
-- **バージョン表示は裏面ノートの下部に置く**（アルバム形態ではブックレット末尾）。`check:dist` は DOM に要素があるかで判定するので適合する。
+- **バージョン表示は裏面ノートの下部に置く**（アルバム形態ではブックレット末尾）。`check:dist` は DOM に要素があるかで判定するので適合する。あわせて**ジャケット裏のバージョン行（`#version-line`、シングルでは裏面パネル下部）と裏ジャケットの脚注（`#bc-foot`）には、作品版数とエンジン版数を併記する**（オーナー指示 2026-11-25）。エンジン版数の正本は `package.json` の `engineVersion`（取り込んだテンプレートの版数）で、`scripts/content-checks.mjs` の `engine-version` 検査が担保する。
 - **インストール入口はトップ画面（表ジャケット、`#install-open-cover`）のみに置く**（オーナー指示 2026-11-21「今後はインストールはトップページに出す」、同日にトップのみへ統一）。裏面ノート・ブックレット末尾には置かない。経緯：テンプレート初版から2か所併置だったが、NK-001（テンプレート以前の素地でブックレット側のみ）へのトップ追加を機に、オーナーがトップのみへの統一を決めた。
 - **記録を持たないアプリなので、`src/storage.ts`・`src/backup.ts`(バックアップ UI)・`src/sound.ts`(効果音)は持たない。** 保存するのはデバッグモードのオン/オフだけ(`src/debug.ts` が自分のキーで管理)。
 - **アイコンは表ジャケットの絵から作った PNG を正本として `public/icons/` に置く。** `scripts/make-icons.mjs` は図形生成ではなく寸法チェックのみ(作り直し手順は同ファイルのコメント参照)。maskable は絵を中央 80% に置き、周囲をテーマ色で埋めた専用品。
-- **音源(mp4)は事前キャッシュに入れない。** Service Worker の実行時キャッシュ(CacheFirst + レンジ要求対応、キャッシュ名は `vite.config.ts` の `AUDIO_CACHE`。雛形では `template-single-audio`)に、初回起動時に全曲を一括ダウンロードする(`src/download.ts`)。画像は事前キャッシュに含める。
+- **音源(mp3)は事前キャッシュに入れない。** Service Worker の実行時キャッシュ(CacheFirst + レンジ要求対応、キャッシュ名は `vite.config.ts` の `AUDIO_CACHE`。雛形では `template-single-audio`)に、初回起動時に全曲を一括ダウンロードする(`src/download.ts`)。画像は事前キャッシュに含める。
 - **ストレージの永続化を要求する。** 音源キャッシュがブラウザの容量整理で消えないよう、起動時と一括ダウンロード完了時に `navigator.storage.persist()` を要求する(`src/pwa.ts` の `requestPersistentStorage`。対応環境のみ・ベストエフォートで、失敗しても動作は止めない)。
 - **プレビュー(`npm run build:preview`)は、音源を 96kbps に再エンコードしてから埋め込む**(単一 HTML が重くなりすぎるため。`scripts/build-preview.mjs` の差し替えプラグイン。ffmpeg が無い環境では元の音源のまま)。
 - **リズムゲームの仮音源は CD 側の仮音源と別。** CD 側の仮音源（10秒）は打音が無く譜面生成を検証できないため、ゲーム側は打音のある合成曲（24秒、`scripts/make-sample-game-audio.py` で生成）を仮置きする。譜面・歌詞の仮データはその音源と雛形の歌詞から生成済みで、verify / e2e / オートプレイ全通しが通る。
-- **歌詞データ `src/album/sync.ts` は生成物。** 各 mp4 に収められた字幕をもとに生成する(生成手順は `docs/PRODUCTION.md` の「素材の用意」)。曲目の正本は `src/album/tracks.ts` で、キーと曲数の整合は `scripts/content-checks.mjs`(sync-keys / media-count)と `tests/data.test.ts` が確かめる。歌詞のない曲は空配列にし、sync-keys は空配列のキーも数える。
+- **歌詞データ `src/album/sync.ts` は生成物。** 受け取り時の元ファイル（MP4）に収められた字幕をもとに生成する（字幕抽出は入口変換で MP3 化する前に行う。生成手順は `docs/PRODUCTION.md` の「素材の用意」）。曲目の正本は `src/album/tracks.ts` で、キーと曲数の整合は `scripts/content-checks.mjs`(sync-keys / media-count)と `tests/data.test.ts` が確かめる。歌詞のない曲は空配列にし、sync-keys は空配列のキーも数える。
 
 ### エンジンとデータの分離(量産の仕組み)
 

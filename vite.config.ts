@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 import { readFileSync } from 'node:fs';
 import { VitePWA } from 'vite-plugin-pwa';
 
-const { version, name: appId } = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { version: string; name: string };
+const { version, engineVersion, name: appId } = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { version: string; engineVersion: string; name: string };
 
 // アプリ名・色はここと index.html の2か所だけ。新しいアプリを作るときに書き換える。
 // APP_NAME はホーム画面に出る名前（manifest の name／short_name）なので、作品名そのものにする。
@@ -21,6 +21,8 @@ export default defineConfig({
   // 画面に表示するバージョン（package.json の version）
   define: {
     __APP_VERSION__: JSON.stringify(version),
+    // 取り込んだテンプレート（エンジン）の版数（package.json の engineVersion）。裏ジャケット脚注に作品版数と併記する。
+    __ENGINE_VERSION__: JSON.stringify(engineVersion),
     // アプリの ID（package.json の name）。保存データのキー・バックアップの app 名・起動失敗の復旧の範囲に使う。
     // GitHub Pages では、すべてのアプリが同じサイトに載るので、アプリごとに別の名前にする。
     __APP_ID__: JSON.stringify(appId),
@@ -54,7 +56,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // 音源（mp4）は容量が大きいので事前キャッシュには入れない。初回起動時にアプリが
+        // 音源（mp3）は容量が大きいので事前キャッシュには入れない。初回起動時にアプリが
         // 一括ダウンロードして実行時キャッシュへ入れる（src/download.ts）。再生時の取りこぼしもここで拾う。
         // 画像は表示に必須なので事前キャッシュに含める（大きめのジャケット画像に合わせて上限を引き上げる）。
         // mp3 / wav はリズムゲームの音源とヒット音（各ファイルは上限未満なので事前キャッシュに入る）
@@ -63,7 +65,7 @@ export default defineConfig({
         navigateFallback: 'index.html',
         runtimeCaching: [
           {
-            urlPattern: /\.mp4($|\?)/,
+            urlPattern: /\.mp3($|\?)/,
             handler: 'CacheFirst',
             options: {
               cacheName: AUDIO_CACHE,
