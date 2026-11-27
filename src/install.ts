@@ -29,6 +29,8 @@ export function setupInstallGuide(
   const buttons = Array.isArray(openButtons) ? openButtons : [openButtons];
   // インストール済みのアプリの中では、入口を出さない
   if (isStandalone()) {
+    // 入口が消えた分、表ジャケットを大きくする（style.css の html.standalone 上書きが効く）
+    document.documentElement.classList.add('standalone');
     buttons.forEach((b) => (b.hidden = true));
     return;
   }
@@ -42,6 +44,8 @@ export function setupInstallGuide(
   window.addEventListener('appinstalled', () => {
     deferred = null;
     installNowButton.hidden = true;
+    // 入口が消えた分、表ジャケットを大きくする（style.css の html.standalone 上書きが効く）
+    document.documentElement.classList.add('standalone');
     buttons.forEach((b) => (b.hidden = true));
     if (dialog.open) dialog.close();
   });
