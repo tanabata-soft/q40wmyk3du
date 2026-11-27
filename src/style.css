@@ -209,6 +209,21 @@ button.link { border: 0; background: transparent; color: var(--amber); text-deco
 .bn-track .tm { color: #c8cede; font-size: 1em; flex: none; }
 .bn-track .bonus { color: #0e1524; background: var(--amber); font-size: .72em; border-radius: 3px; padding: 1px 5px; margin-left: 8px; letter-spacing: .1em; vertical-align: 2px; }
 .backnote .version { margin-top: auto; padding-top: .8em; font-size: .92em; letter-spacing: .12em; }
+/* 裏面パネルの短い画面向け圧縮（エンジン v1.23.2）: パネル高さはジャケット幅×1.938 で決まるため、
+   背の低い画面では表ジャケットの幅が絞られ、ライナーノーツが収まらない（NK-S011 の実テキストで
+   375×667 に 24px 不足し、作品側 e2e が落ちた）。main.ts の fitBacknote はフォントサイズを
+   6.5px の下限まで縮めるが、幅が狭い画面では高さが「行数×行間 (1.9)」に支配され、フォント縮小
+   だけでは吸収しきれない。そこで高さ 700px 以下の画面に限り、em 連動の行間と余白だけを詰める。
+   fitBacknote とは競合せず、圧縮で総高さが下がる分、fitBacknote はより大きいフォントサイズで
+   収束する（375×667 で下限張り付き 6.5px → 7px）。通常の高さでは一切効かず従来表示のまま。
+   文字そのものは削らない・隠さない（詰めるのは余白と行間だけ）。 */
+@media (max-height: 700px) {
+  .backnote { padding: 1em 1.25em .8em; }
+  .bn-head { padding-bottom: .35em; margin-bottom: .55em; }
+  .bn-p { line-height: 1.58; margin-bottom: .5em; }
+  .bn-track { padding-top: .42em; padding-bottom: .42em; }
+  .backnote .version { padding-top: .55em; }
+}
 /* リピート切替ボタン（1曲モードでバッジと枠を出す） */
 #btn-repeat { position: relative; }
 #btn-repeat.one { border-color: var(--amber); }
