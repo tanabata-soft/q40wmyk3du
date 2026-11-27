@@ -29,6 +29,8 @@ SONGS = {
         # vocal_notes で歌唱区間を歌音符ベース生成にする
         "vocal_sep": True,
         "vocal_notes": True,
+        # v2.0.5: Phase 4 リズム型マッチング（パターン区間を実測リズムに合わせる）を採用
+        "rhythm_match": True,
         # フリック固定: v2.0.1 試行で確定した譜面から導出したフリック
         # [時刻ms, レーン, ランク]（ランク: easy から出る=0／normal から=1／
         # hard のみ=2）。今後の再生成でフリックは動かない
@@ -51,6 +53,8 @@ SONGS = {
         # 採用（vocal_sep + vocal_notes）。flick_lock は従来の15件を据え置き
         "vocal_sep": True,
         "vocal_notes": True,
+        # v2.0.5: Phase 4 リズム型マッチング（パターン区間を実測リズムに合わせる）を採用
+        "rhythm_match": True,
         # フリック固定: 公開済み（v1.0.1）譜面から導出した現行フリック
         # [時刻ms, レーン, ランク]（ランク: easy から出る=0／normal から=1／
         # hard のみ=2）。バラード化で密度計画が変わってもフリックは動かない
@@ -72,6 +76,8 @@ SONGS = {
         # vocal_notes で歌唱区間を歌音符ベース生成にする
         "vocal_sep": True,
         "vocal_notes": True,
+        # v2.0.5: Phase 4 リズム型マッチング（パターン区間を実測リズムに合わせる）を採用
+        "rhythm_match": True,
         # フリック固定: v2.0.1 試行で確定した譜面から導出したフリック
         # [時刻ms, レーン, ランク]（ランク: easy から出る=0／normal から=1／
         # hard のみ=2）。今後の再生成でフリックは動かない
