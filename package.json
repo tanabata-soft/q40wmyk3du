@@ -30,6 +30,6 @@
     "verify": "npm run lint && npm test && npm run build && npm run check:dist && npm run check:content"
   },
   "type": "module",
-  "version": "2.0.5",
-  "engineVersion": "1.23.0"
+  "version": "2.0.6",
+  "engineVersion": "1.23.1"
 }

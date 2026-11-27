@@ -38,7 +38,13 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ---------- 表ジャケット ---------- */
 #view-cover { align-items: center; justify-content: flex-start; padding: var(--safe-top) 0 calc(40px + env(safe-area-inset-bottom)); background: linear-gradient(180deg, rgba(13,20,38,.52), rgba(13,20,38,.80)), url("./album/assets/img/bg.jpg") center/cover no-repeat, var(--indigo); }
-.flip { position: relative; width: min(88vw, 480px); margin-top: 6px; perspective: 1400px; border-radius: 2px; box-shadow: 0 3px 8px rgba(0,0,0,.45), 0 26px 54px rgba(0,0,0,.55); }
+/* ジャケットの大きさは「幅」と「高さ」の2つの制約の小さい方で決める（オーナー指示 2026-11-27）。
+   幅: 88vw（両側に約6%の余白を残す。ベタ貼りにはしない）。
+   高さ: ボタン群とインストール入口まで含めた表紙の列全体が、スクロールなしで画面に収まる上限。
+   高さ側の差し引き 221px は実測の内訳（ボタン群 81 + 入口 44 + 各マージン 24/20 + 下パディング 40
+   + ジャケットの margin-top 6 = 215）に、端末差の安全余裕 6px を足したもの。上端・下端の
+   セーフエリアは var / env で別に引くので、ノッチ付き端末でも自動で追従する。 */
+.flip { position: relative; width: min(88vw, 560px, calc(100dvh - var(--safe-top) - env(safe-area-inset-bottom) - 221px)); margin-top: 6px; perspective: 1400px; border-radius: 2px; box-shadow: 0 3px 8px rgba(0,0,0,.45), 0 26px 54px rgba(0,0,0,.55); }
 /* 置いてある質感: ジャケットの下に落ちる接地影 */
 .flip::after { content: ""; position: absolute; left: 5%; right: 5%; bottom: -34px; height: 40px; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.6), rgba(0,0,0,0) 70%); filter: blur(7px); z-index: -1; pointer-events: none; }
 .flip-inner { position: relative; width: 100%; aspect-ratio: 1; transform-style: preserve-3d; transition: transform .7s cubic-bezier(.25,.7,.3,1); }
@@ -176,7 +182,13 @@ button.link { border: 0; background: transparent; color: var(--amber); text-deco
 }
 
 /* ---------- シングル形態（8cmシングル短冊型ジャケット＋裏面パネル、ブックレットなし） ---------- */
-.layout-single .flip { width: min(78vw, 336px, max(200px, calc(51.6dvh - 112px))); margin-top: 10px; }
+/* シングルも2制約ルールは共通（幅 88vw / 上限 400px）。高さ側は短冊の縦横比 1.938 で割り戻すため、
+   係数形（51.6dvh − 固定量×0.516）で書く。固定量の実測は 219px（アルバムの内訳との差は
+   margin-top 10 と、パディング等は共通）＋安全余裕 6px = 225px で、×0.516 ≒ 116px。
+   旧式（51.6dvh − 112px）は固定量を 217px と見積もっていて実測 243px より小さく、
+   短い画面では今でもスクロールしていた。実測に直した結果、短い画面では旧来より
+   ジャケットが少し小さくなる代わりに、列全体がスクロールなしで収まるようになる。 */
+.layout-single .flip { width: min(88vw, 400px, max(200px, calc(51.6dvh - (var(--safe-top) + env(safe-area-inset-bottom)) * 0.516 - 116px))); margin-top: 10px; }
 .layout-single .flip-inner { aspect-ratio: 1 / 1.938; }
 /* 短冊ケースらしく: クリアケースの縁と斜めのツヤを強める */
 .layout-single .case { border-radius: 5px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.15), inset 0 0 26px rgba(255,255,255,.05), 0 24px 44px rgba(0,0,0,.5); }
