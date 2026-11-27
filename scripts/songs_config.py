@@ -35,6 +35,7 @@ SONGS = {
         # スターべーション修正（エンジン v1.25.0）を採用
         "vocal_grid_snap": True,
         "easy_cover_fix": True,
+        "vocal_unison_snap": True,
         # フリック固定: v2.0.1 試行で確定した譜面から導出したフリック
         # [時刻ms, レーン, ランク]（ランク: easy から出る=0／normal から=1／
         # hard のみ=2）。今後の再生成でフリックは動かない
@@ -68,6 +69,7 @@ SONGS = {
         # スターべーション修正（エンジン v1.25.0）を採用
         "vocal_grid_snap": True,
         "easy_cover_fix": True,
+        "vocal_unison_snap": True,
         # フリック固定: 公開済み（v1.0.1）譜面から導出した現行フリック
         # [時刻ms, レーン, ランク]（ランク: easy から出る=0／normal から=1／
         # hard のみ=2）。バラード化で密度計画が変わってもフリックは動かない
@@ -95,6 +97,7 @@ SONGS = {
         # スターべーション修正（エンジン v1.25.0）を採用
         "vocal_grid_snap": True,
         "easy_cover_fix": True,
+        "vocal_unison_snap": True,
         # フリック固定: v2.0.1 試行で確定した譜面から導出したフリック
         # [時刻ms, レーン, ランク]（ランク: easy から出る=0／normal から=1／
         # hard のみ=2）。今後の再生成でフリックは動かない
