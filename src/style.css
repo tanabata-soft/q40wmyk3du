@@ -5,6 +5,10 @@
      上端の余白は、env(safe-area-inset-top) だけにせず、この --safe-top を使う。 */
   --top-gap: 24px;
   --safe-top: calc(env(safe-area-inset-top) + var(--top-gap));
+  /* 表ジャケットの高さ側の差し引き（固定量）。standalone では入口分を差し戻した値に
+     切り替わる（上書きは「表ジャケット」の節。入口を隠す条件と対になっている）。 */
+  --cover-fixed: 221px;
+  --cover-fixed-single: 116px;
   --indigo: #101a30;
   --indigo2: #16233f;
   --paper: #f5efe1;
@@ -44,7 +48,19 @@ button { font-family: inherit; cursor: pointer; }
    高さ側の差し引き 221px は実測の内訳（ボタン群 81 + 入口 44 + 各マージン 24/20 + 下パディング 40
    + ジャケットの margin-top 6 = 215）に、端末差の安全余裕 6px を足したもの。上端・下端の
    セーフエリアは var / env で別に引くので、ノッチ付き端末でも自動で追従する。 */
-.flip { position: relative; width: min(88vw, 560px, calc(100dvh - var(--safe-top) - env(safe-area-inset-bottom) - 221px)); margin-top: 6px; perspective: 1400px; border-radius: 2px; box-shadow: 0 3px 8px rgba(0,0,0,.45), 0 26px 54px rgba(0,0,0,.55); }
+/* standalone（インストール済みのアプリ）では入口が表示されず、列が入口分（44px + margin-top 20px
+   = 64px）だけ短くなる。差し引きから入口分を差し戻してジャケットを大きくする
+   （オーナー指示 2026-11-27「インストール後は非表示なので大きく表示してほしい」、エンジン v1.23.3）。
+   入口を隠す条件は install.ts の isStandalone() と appinstalled の2経路あるため、追従も2経路用意する:
+   display-mode のメディアクエリと、install.ts が入口を隠すときに付ける html.standalone クラス
+   （iOS の navigator.standalone 経路や、ブラウザのまま appinstalled が発火した場合など、
+   メディアクエリだけでは入口の非表示と一致しない場合の担保）。シングル側は固定量 225−64=161px
+   の係数形で 161×0.516 ≒ 83px。 */
+@media (display-mode: standalone) {
+  :root { --cover-fixed: 157px; --cover-fixed-single: 83px; }
+}
+html.standalone { --cover-fixed: 157px; --cover-fixed-single: 83px; }
+.flip { position: relative; width: min(88vw, 560px, calc(100dvh - var(--safe-top) - env(safe-area-inset-bottom) - var(--cover-fixed))); margin-top: 6px; perspective: 1400px; border-radius: 2px; box-shadow: 0 3px 8px rgba(0,0,0,.45), 0 26px 54px rgba(0,0,0,.55); }
 /* 置いてある質感: ジャケットの下に落ちる接地影 */
 .flip::after { content: ""; position: absolute; left: 5%; right: 5%; bottom: -34px; height: 40px; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.6), rgba(0,0,0,0) 70%); filter: blur(7px); z-index: -1; pointer-events: none; }
 .flip-inner { position: relative; width: 100%; aspect-ratio: 1; transform-style: preserve-3d; transition: transform .7s cubic-bezier(.25,.7,.3,1); }
@@ -187,8 +203,10 @@ button.link { border: 0; background: transparent; color: var(--amber); text-deco
    margin-top 10 と、パディング等は共通）＋安全余裕 6px = 225px で、×0.516 ≒ 116px。
    旧式（51.6dvh − 112px）は固定量を 217px と見積もっていて実測 243px より小さく、
    短い画面では今でもスクロールしていた。実測に直した結果、短い画面では旧来より
-   ジャケットが少し小さくなる代わりに、列全体がスクロールなしで収まるようになる。 */
-.layout-single .flip { width: min(88vw, 400px, max(200px, calc(51.6dvh - (var(--safe-top) + env(safe-area-inset-bottom)) * 0.516 - 116px))); margin-top: 10px; }
+   ジャケットが少し小さくなる代わりに、列全体がスクロールなしで収まるようになる。
+   standalone では入口分 64px を差し戻し、固定量 161px（×0.516 ≒ 83px）になる
+   （--cover-fixed-single の上書きは「表ジャケット」の節。幅は約 33px 増える）。 */
+.layout-single .flip { width: min(88vw, 400px, max(200px, calc(51.6dvh - (var(--safe-top) + env(safe-area-inset-bottom)) * 0.516 - var(--cover-fixed-single)))); margin-top: 10px; }
 .layout-single .flip-inner { aspect-ratio: 1 / 1.938; }
 /* 短冊ケースらしく: クリアケースの縁と斜めのツヤを強める */
 .layout-single .case { border-radius: 5px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.15), inset 0 0 26px rgba(255,255,255,.05), 0 24px 44px rgba(0,0,0,.5); }
